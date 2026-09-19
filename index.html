@@ -47,16 +47,10 @@ body{
 a{color:var(--primary);text-decoration:none}
 button{font-family:inherit}
 img,svg{display:block;max-width:100%}
-
-/* ============================================================
-   КОНТЕЙНЕР
-============================================================ */
 .container{max-width:1180px;margin:0 auto;padding:0 24px}
 @media (max-width:600px){.container{padding:0 16px}}
 
-/* ============================================================
-   HEADER
-============================================================ */
+/* HEADER */
 .header{
   position:sticky;top:0;z-index:100;
   background:rgba(248,250,252,.85);
@@ -97,9 +91,7 @@ img,svg{display:block;max-width:100%}
   .header-actions{margin-left:auto}
 }
 
-/* ============================================================
-   КНОПКИ
-============================================================ */
+/* BUTTONS */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   padding:12px 22px;border:1.5px solid transparent;border-radius:12px;
@@ -120,9 +112,6 @@ img,svg{display:block;max-width:100%}
 }
 .btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:rgba(14,165,233,.05)}
 .btn-lg{padding:16px 32px;font-size:17px;border-radius:14px}
-.btn-icon{
-  padding:10px;width:40px;height:40px;border-radius:10px;
-}
 #theme-toggle{
   background:transparent;color:var(--text);
   border:1.5px solid var(--border);cursor:pointer;
@@ -132,9 +121,7 @@ img,svg{display:block;max-width:100%}
 }
 #theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
 
-/* ============================================================
-   HERO
-============================================================ */
+/* HERO */
 .hero{
   padding:80px 0 60px;
   position:relative;overflow:hidden;
@@ -270,13 +257,8 @@ img,svg{display:block;max-width:100%}
   .floating-badge{display:none}
 }
 
-/* ============================================================
-   БЕСПЛАТНО
-============================================================ */
-.free-section{
-  padding:70px 0;
-  position:relative;
-}
+/* FREE */
+.free-section{padding:70px 0;position:relative}
 .free-card{
   background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(168,85,247,.08));
   border:2px dashed rgba(14,165,233,.4);
@@ -325,16 +307,10 @@ img,svg{display:block;max-width:100%}
   background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(168,85,247,.15));
   color:var(--primary);margin-bottom:12px;
 }
-.free-benefit-title{
-  font-weight:700;font-size:14px;
-}
-.free-benefit-desc{
-  font-size:12px;color:var(--text-muted);margin-top:4px;
-}
+.free-benefit-title{font-weight:700;font-size:14px}
+.free-benefit-desc{font-size:12px;color:var(--text-muted);margin-top:4px}
 
-/* ============================================================
-   ЗАГОЛОВКИ СЕКЦИЙ
-============================================================ */
+/* SECTIONS */
 .section{padding:80px 0}
 @media (max-width:700px){.section{padding:50px 0}}
 .section-head{
@@ -357,13 +333,9 @@ img,svg{display:block;max-width:100%}
   -webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;color:transparent;
 }
-.section-sub{
-  font-size:17px;color:var(--text-muted);
-}
+.section-sub{font-size:17px;color:var(--text-muted)}
 
-/* ============================================================
-   ФИЧИ
-============================================================ */
+/* FEATURES */
 .features-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
   gap:22px;
@@ -396,13 +368,9 @@ img,svg{display:block;max-width:100%}
   font-size:18px;font-weight:700;margin-bottom:8px;
   letter-spacing:-.01em;
 }
-.feature p{
-  font-size:14px;color:var(--text-muted);line-height:1.65;
-}
+.feature p{font-size:14px;color:var(--text-muted);line-height:1.65}
 
-/* ============================================================
-   КАК РАБОТАЕТ
-============================================================ */
+/* STEPS */
 .steps{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:22px;position:relative;
@@ -424,13 +392,9 @@ img,svg{display:block;max-width:100%}
   font-size:16px;font-weight:700;margin:14px 0 8px;
   letter-spacing:-.01em;
 }
-.step p{
-  font-size:13px;color:var(--text-muted);line-height:1.6;
-}
+.step p{font-size:13px;color:var(--text-muted);line-height:1.6}
 
-/* ============================================================
-   РОЛИ
-============================================================ */
+/* ROLES */
 .roles{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
   gap:20px;
@@ -460,12 +424,8 @@ img,svg{display:block;max-width:100%}
 }
 .role li svg{color:var(--success);flex-shrink:0;margin-top:4px}
 
-/* ============================================================
-   FAQ
-============================================================ */
-.faq{
-  max-width:820px;margin:0 auto;
-}
+/* FAQ */
+.faq{max-width:820px;margin:0 auto}
 .faq-item{
   background:var(--bg-elev);border-radius:var(--radius);
   border:1px solid var(--border);
@@ -498,12 +458,8 @@ img,svg{display:block;max-width:100%}
   color:var(--text-muted);font-size:14px;line-height:1.7;
 }
 
-/* ============================================================
-   CTA
-============================================================ */
-.cta{
-  padding:80px 0;
-}
+/* CTA */
+.cta{padding:80px 0}
 .cta-card{
   background:linear-gradient(135deg,#0EA5E9 0%,#38BDF8 40%,#A855F7 100%);
   border-radius:var(--radius-lg);
@@ -560,9 +516,7 @@ img,svg{display:block;max-width:100%}
 }
 .cta-btn-ghost:hover{background:rgba(255,255,255,.25)}
 
-/* ============================================================
-   FOOTER
-============================================================ */
+/* FOOTER */
 .footer{
   border-top:1px solid var(--border);
   padding:50px 0 30px;
@@ -605,18 +559,14 @@ img,svg{display:block;max-width:100%}
 }
 .footer-bottom svg{color:var(--danger)}
 
-/* ============================================================
-   СКРОЛЛ-АНИМАЦИИ
-============================================================ */
+/* REVEAL */
 .reveal{
   opacity:0;transform:translateY(30px);
   transition:opacity .7s ease,transform .7s ease;
 }
 .reveal.visible{opacity:1;transform:translateY(0)}
 
-/* ============================================================
-   МОБИЛЬНОЕ МЕНЮ
-============================================================ */
+/* MOBILE MENU */
 .mobile-menu-btn{
   display:none;background:transparent;border:none;
   color:var(--text);cursor:pointer;padding:8px;
@@ -643,9 +593,6 @@ img,svg{display:block;max-width:100%}
 </head>
 <body>
 
-<!-- ============================================================
-     HEADER
-============================================================ -->
 <header class="header">
   <div class="container">
     <div class="header-inner">
@@ -673,7 +620,7 @@ img,svg{display:block;max-width:100%}
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
         </button>
-        <a href="#cta" class="btn btn-primary">Открыть журнал</a>
+        <a href="https://akov46849-del.github.io/Electronnyadnev/" class="btn btn-primary">Открыть журнал</a>
         <button class="mobile-menu-btn" id="mobile-menu-btn">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -695,12 +642,9 @@ img,svg{display:block;max-width:100%}
   <a href="#how" onclick="closeMobileMenu()">Как начать</a>
   <a href="#roles" onclick="closeMobileMenu()">Роли</a>
   <a href="#faq" onclick="closeMobileMenu()">Вопросы</a>
-  <a href="#cta" onclick="closeMobileMenu()" style="background:linear-gradient(135deg,#0EA5E9,#38BDF8);color:#fff;text-align:center;">Открыть журнал</a>
+  <a href="https://akov46849-del.github.io/Electronnyadnev/" onclick="closeMobileMenu()" style="background:linear-gradient(135deg,#0EA5E9,#38BDF8);color:#fff;text-align:center;">Открыть журнал</a>
 </div>
 
-<!-- ============================================================
-     HERO
-============================================================ -->
 <section class="hero">
   <div class="container">
     <div class="hero-grid">
@@ -720,7 +664,7 @@ img,svg{display:block;max-width:100%}
           Работает на планшете, компьютере и телефоне. Без установки, без оплаты, без рекламы.
         </p>
         <div class="hero-actions">
-          <a href="#cta" class="btn btn-primary btn-lg">
+          <a href="https://akov46849-del.github.io/Electronnyadnev/" class="btn btn-primary btn-lg">
             Начать бесплатно
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -836,9 +780,6 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     ПОЧЕМУ БЕСПЛАТНО
-============================================================ -->
 <section class="free-section" id="free">
   <div class="container">
     <div class="free-card reveal">
@@ -897,9 +838,6 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     ВОЗМОЖНОСТИ
-============================================================ -->
 <section class="section" id="features">
   <div class="container">
     <div class="section-head reveal">
@@ -1004,9 +942,6 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     КАК НАЧАТЬ
-============================================================ -->
 <section class="section" id="how" style="background:var(--bg-elev);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
     <div class="section-head reveal">
@@ -1043,9 +978,6 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     РОЛИ
-============================================================ -->
 <section class="section" id="roles">
   <div class="container">
     <div class="section-head reveal">
@@ -1098,9 +1030,6 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     FAQ
-============================================================ -->
 <section class="section" id="faq">
   <div class="container">
     <div class="section-head reveal">
@@ -1224,16 +1153,13 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     CTA
-============================================================ -->
 <section class="cta" id="cta">
   <div class="container">
     <div class="cta-card reveal">
       <h2>Готовы попробовать?</h2>
       <p>Откройте «Класс Жур» и начните вести журнал уже через минуту. Это бесплатно и ни к чему не обязывает.</p>
       <div class="cta-actions">
-        <a href="#" class="cta-btn">
+        <a href="https://akov46849-del.github.io/Electronnyadnev/" class="cta-btn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
           </svg>
@@ -1247,9 +1173,6 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
-<!-- ============================================================
-     FOOTER
-============================================================ -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
@@ -1274,7 +1197,7 @@ img,svg{display:block;max-width:100%}
         <a href="#features">Возможности</a>
         <a href="#how">Как начать</a>
         <a href="#roles">Роли</a>
-        <a href="#cta">Открыть журнал</a>
+        <a href="https://akov46849-del.github.io/Electronnyadnev/">Открыть журнал</a>
       </div>
 
       <div class="footer-col">
@@ -1307,9 +1230,6 @@ img,svg{display:block;max-width:100%}
 </footer>
 
 <script>
-/* ============================================================
-   ТЕМА
-============================================================ */
 (function() {
   var saved = localStorage.getItem('theme') || 'light';
   document.documentElement.dataset.theme = saved;
@@ -1333,18 +1253,12 @@ img,svg{display:block;max-width:100%}
   }
 })();
 
-/* ============================================================
-   FAQ
-============================================================ */
 document.querySelectorAll('.faq-item').forEach(function(item) {
   item.querySelector('.faq-q').addEventListener('click', function() {
     item.classList.toggle('open');
   });
 });
 
-/* ============================================================
-   МОБИЛЬНОЕ МЕНЮ
-============================================================ */
 function closeMobileMenu() {
   document.getElementById('mobile-menu').classList.remove('open');
 }
@@ -1353,9 +1267,6 @@ document.getElementById('mobile-menu-btn').addEventListener('click', function() 
 });
 document.getElementById('mobile-menu-close').addEventListener('click', closeMobileMenu);
 
-/* ============================================================
-   СКРОЛЛ-АНИМАЦИИ
-============================================================ */
 var observer = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {
     if (entry.isIntersecting) {
