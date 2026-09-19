@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Класс Жур — бесплатный электронный журнал для школ</title>
+<meta name="description" content="Класс Жур — современный бесплатный электронный журнал для школ. Оценки, ученики, классы, домашние задания. Без оплаты, без рекламы, без ограничений.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='28' fill='%230EA5E9'/><path d='M25 40 Q60 30 60 40 Q60 30 95 40 L95 82 Q60 72 60 82 Q60 72 25 82 Z' fill='%23FFFFFF'/><line x1='60' y1='40' x2='60' y2='82' stroke='%230EA5E9' stroke-width='2'/><path d='M42 60 L56 74 L84 46' stroke='%23FACC15' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+<style>
+:root{
+  --bg:#F8FAFC;
+  --bg-elev:#FFFFFF;
+  --text:#0F172A;
+  --text-muted:#64748B;
+  --border:#E2E8F0;
+  --primary:#0EA5E9;
+  --primary-hover:#0284C7;
+  --accent:#A855F7;
+  --yellow:#FACC15;
+  --success:#10B981;
+  --danger:#EF4444;
+  --shadow:0 1px 3px rgba(15,23,42,.08),0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg:0 20px 40px rgba(14,165,233,.15);
+  --radius:16px;
+  --radius-lg:24px;
+}
+[data-theme="dark"]{
+  --bg:#0F172A;
+  --bg-elev:#1E293B;
+  --text:#E2E8F0;
+  --text-muted:#94A3B8;
+  --border:#334155;
+  --primary:#38BDF8;
+  --primary-hover:#7DD3FC;
+  --accent:#C084FC;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+  --shadow-lg:0 20px 40px rgba(56,189,248,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;
+  transition:background .3s ease,color .3s ease;
+  overflow-x:hidden;
+}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit}
+img,svg{display:block;max-width:100%}
+
+/* ============================================================
+   КОНТЕЙНЕР
+============================================================ */
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+@media (max-width:600px){.container{padding:0 16px}}
+
+/* ============================================================
+   HEADER
+============================================================ */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(248,250,252,.85);
+  backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid var(--border);
+  transition:background .3s ease;
+}
+[data-theme="dark"] .header{background:rgba(15,23,42,.85)}
+.header-inner{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 0;
+}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:20px;color:var(--text)}
+.brand-logo{width:44px;height:44px;flex-shrink:0}
+.brand-text{line-height:1.1}
+.brand-name{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  letter-spacing:-.03em;
+}
+.brand-tag{
+  font-size:10px;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.1em;
+  font-weight:700;margin-top:2px;
+}
+.header-nav{
+  display:flex;gap:22px;margin-left:auto;
+}
+.header-nav a{
+  color:var(--text-muted);font-weight:500;font-size:15px;
+  transition:color .2s ease;
+}
+.header-nav a:hover{color:var(--primary)}
+.header-actions{display:flex;gap:10px;align-items:center;margin-left:16px}
+@media (max-width:880px){
+  .header-nav{display:none}
+  .header-actions{margin-left:auto}
+}
+
+/* ============================================================
+   КНОПКИ
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border:1.5px solid transparent;border-radius:12px;
+  font-size:15px;font-weight:600;cursor:pointer;
+  transition:all .2s ease;white-space:nowrap;text-decoration:none;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary),#38BDF8);
+  color:#fff;box-shadow:0 6px 20px rgba(14,165,233,.35);
+}
+.btn-primary:hover{
+  background:linear-gradient(135deg,var(--primary-hover),var(--primary));
+  transform:translateY(-2px);box-shadow:0 10px 28px rgba(14,165,233,.45);
+}
+.btn-ghost{
+  background:transparent;color:var(--text);
+  border-color:var(--border);
+}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:rgba(14,165,233,.05)}
+.btn-lg{padding:16px 32px;font-size:17px;border-radius:14px}
+.btn-icon{
+  padding:10px;width:40px;height:40px;border-radius:10px;
+}
+#theme-toggle{
+  background:transparent;color:var(--text);
+  border:1.5px solid var(--border);cursor:pointer;
+  width:40px;height:40px;border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:all .2s ease;
+}
+#theme-toggle:hover{border-color:var(--primary);color:var(--primary)}
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero{
+  padding:80px 0 60px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-200px;right:-200px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(14,165,233,.15),transparent 70%);
+  pointer-events:none;z-index:-1;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-300px;left:-300px;
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.12),transparent 70%);
+  pointer-events:none;z-index:-1;
+}
+.hero-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;
+  align-items:center;
+}
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:40px;text-align:center}
+  .hero{padding:50px 0 30px}
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:100px;
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(168,85,247,.12));
+  color:var(--primary);font-size:13px;font-weight:700;
+  margin-bottom:24px;
+}
+.hero-badge svg{color:var(--yellow)}
+.hero h1{
+  font-size:clamp(34px,5vw,56px);
+  line-height:1.1;letter-spacing:-.03em;font-weight:800;
+  margin-bottom:22px;
+}
+.hero h1 .gradient{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.hero-subtitle{
+  font-size:19px;color:var(--text-muted);
+  margin-bottom:32px;max-width:520px;
+}
+@media (max-width:900px){.hero-subtitle{margin-left:auto;margin-right:auto}}
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px;
+}
+@media (max-width:900px){.hero-actions{justify-content:center}}
+.hero-features{
+  display:flex;gap:24px;flex-wrap:wrap;
+  font-size:14px;color:var(--text-muted);
+}
+@media (max-width:900px){.hero-features{justify-content:center}}
+.hero-feature{
+  display:flex;align-items:center;gap:8px;
+}
+.hero-feature svg{color:var(--success);flex-shrink:0}
+
+.hero-visual{
+  position:relative;
+  padding:20px;
+}
+.hero-mockup{
+  background:var(--bg-elev);border-radius:var(--radius-lg);
+  padding:20px;box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  transform:perspective(1200px) rotateY(-6deg) rotateX(3deg);
+  transition:transform .4s ease;
+  position:relative;
+}
+.hero-mockup:hover{
+  transform:perspective(1200px) rotateY(-3deg) rotateX(1deg) translateY(-4px);
+}
+.mockup-header{
+  display:flex;gap:6px;margin-bottom:16px;
+}
+.mockup-dot{width:11px;height:11px;border-radius:50%}
+.mockup-dot.r{background:#FF5F57}
+.mockup-dot.y{background:#FEBC2E}
+.mockup-dot.g{background:#28C840}
+.mockup-table{
+  display:grid;grid-template-columns:50px repeat(8,1fr) 50px 50px;
+  gap:2px;font-size:10px;
+}
+.mockup-cell{
+  background:var(--bg);padding:5px 2px;
+  text-align:center;border-radius:4px;
+  font-weight:600;color:var(--text-muted);
+}
+.mockup-cell.head{
+  background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(168,85,247,.1));
+  color:var(--primary);font-weight:800;
+}
+.mockup-cell.name{
+  text-align:left;padding-left:8px;
+  font-weight:600;color:var(--text);font-size:10px;
+}
+.mockup-grade{
+  display:flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:5px;
+  margin:0 auto;font-weight:800;color:#fff;font-size:10px;
+}
+.g5{background:#10B981}
+.g4{background:#84CC16}
+.g3{background:#F59E0B}
+.g2{background:#EF4444}
+.empty-g{background:transparent;border:1px dashed rgba(148,163,184,.4)}
+
+.floating-badge{
+  position:absolute;background:var(--bg-elev);
+  padding:12px 16px;border-radius:14px;
+  box-shadow:var(--shadow-lg);font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+  animation:float 3s ease-in-out infinite;
+}
+.floating-badge.top-right{
+  top:-10px;right:-10px;
+  animation-delay:.5s;
+}
+.floating-badge.bottom-left{
+  bottom:20px;left:-20px;
+}
+.floating-badge svg{flex-shrink:0}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+}
+@media (max-width:900px){
+  .hero-mockup{transform:none}
+  .floating-badge{display:none}
+}
+
+/* ============================================================
+   БЕСПЛАТНО
+============================================================ */
+.free-section{
+  padding:70px 0;
+  position:relative;
+}
+.free-card{
+  background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(168,85,247,.08));
+  border:2px dashed rgba(14,165,233,.4);
+  border-radius:var(--radius-lg);
+  padding:50px 40px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+@media (max-width:600px){.free-card{padding:36px 22px}}
+.free-card::before{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(250,204,21,.2),transparent 70%);
+}
+.free-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 20px;border-radius:100px;
+  background:linear-gradient(135deg,var(--success),#059669);
+  color:#fff;font-size:14px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;
+  margin-bottom:22px;
+  box-shadow:0 6px 20px rgba(16,185,129,.4);
+}
+.free-card h2{
+  font-size:clamp(26px,3.5vw,40px);
+  letter-spacing:-.02em;margin-bottom:16px;font-weight:800;
+}
+.free-card p{
+  font-size:17px;color:var(--text-muted);
+  max-width:640px;margin:0 auto 30px;
+}
+.free-benefits{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:18px;margin-top:30px;
+}
+.free-benefit{
+  background:var(--bg-elev);
+  padding:20px 16px;border-radius:14px;
+  border:1px solid var(--border);
+  text-align:center;
+}
+.free-benefit-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(168,85,247,.15));
+  color:var(--primary);margin-bottom:12px;
+}
+.free-benefit-title{
+  font-weight:700;font-size:14px;
+}
+.free-benefit-desc{
+  font-size:12px;color:var(--text-muted);margin-top:4px;
+}
+
+/* ============================================================
+   ЗАГОЛОВКИ СЕКЦИЙ
+============================================================ */
+.section{padding:80px 0}
+@media (max-width:700px){.section{padding:50px 0}}
+.section-head{
+  text-align:center;max-width:720px;margin:0 auto 50px;
+}
+.section-tag{
+  display:inline-block;padding:6px 14px;border-radius:100px;
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(168,85,247,.12));
+  color:var(--primary);font-size:12px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:16px;
+}
+.section h2{
+  font-size:clamp(28px,4vw,42px);
+  letter-spacing:-.02em;font-weight:800;line-height:1.15;
+  margin-bottom:16px;
+}
+.section h2 .gradient{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.section-sub{
+  font-size:17px;color:var(--text-muted);
+}
+
+/* ============================================================
+   ФИЧИ
+============================================================ */
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:22px;
+}
+.feature{
+  background:var(--bg-elev);border-radius:var(--radius);
+  padding:28px;border:1px solid var(--border);
+  transition:all .25s ease;
+  position:relative;overflow:hidden;
+}
+.feature::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .3s ease;
+}
+.feature:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+  border-color:transparent;
+}
+.feature:hover::after{transform:scaleX(1)}
+.feature-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(168,85,247,.15));
+  color:var(--primary);margin-bottom:18px;
+}
+.feature h3{
+  font-size:18px;font-weight:700;margin-bottom:8px;
+  letter-spacing:-.01em;
+}
+.feature p{
+  font-size:14px;color:var(--text-muted);line-height:1.65;
+}
+
+/* ============================================================
+   КАК РАБОТАЕТ
+============================================================ */
+.steps{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;position:relative;
+}
+.step{
+  background:var(--bg-elev);border-radius:var(--radius);
+  padding:28px 22px;border:1px solid var(--border);
+  position:relative;
+}
+.step-num{
+  position:absolute;top:-16px;left:24px;
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--primary),#38BDF8);
+  color:#fff;font-weight:800;font-size:20px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(14,165,233,.4);
+}
+.step h3{
+  font-size:16px;font-weight:700;margin:14px 0 8px;
+  letter-spacing:-.01em;
+}
+.step p{
+  font-size:13px;color:var(--text-muted);line-height:1.6;
+}
+
+/* ============================================================
+   РОЛИ
+============================================================ */
+.roles{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+.role{
+  background:var(--bg-elev);border-radius:var(--radius);
+  padding:26px;border:1px solid var(--border);
+  transition:all .25s ease;
+}
+.role:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.role-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:100px;
+  font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:14px;
+}
+.role-tag.creator{background:linear-gradient(135deg,#FACC15,#F59E0B);color:#fff}
+.role-tag.city{background:linear-gradient(135deg,#A855F7,#7C3AED);color:#fff}
+.role-tag.school{background:linear-gradient(135deg,#0EA5E9,#0284C7);color:#fff}
+.role-tag.teacher{background:linear-gradient(135deg,#10B981,#059669);color:#fff}
+.role h3{font-size:17px;font-weight:700;margin-bottom:10px}
+.role ul{list-style:none;padding:0}
+.role li{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:13px;color:var(--text-muted);
+  margin-bottom:6px;line-height:1.5;
+}
+.role li svg{color:var(--success);flex-shrink:0;margin-top:4px}
+
+/* ============================================================
+   FAQ
+============================================================ */
+.faq{
+  max-width:820px;margin:0 auto;
+}
+.faq-item{
+  background:var(--bg-elev);border-radius:var(--radius);
+  border:1px solid var(--border);
+  margin-bottom:12px;overflow:hidden;
+  transition:border-color .2s ease;
+}
+.faq-item:hover{border-color:var(--primary)}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;cursor:pointer;user-select:none;
+  font-weight:700;font-size:15px;
+  transition:background .2s ease;
+}
+.faq-q:hover{background:rgba(14,165,233,.03)}
+.faq-q .plus{
+  width:28px;height:28px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(168,85,247,.12));
+  color:var(--primary);flex-shrink:0;margin-left:16px;
+  transition:transform .25s ease;
+}
+.faq-item.open .faq-q .plus{transform:rotate(45deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .3s ease;
+}
+.faq-item.open .faq-a{max-height:400px}
+.faq-a-inner{
+  padding:0 24px 22px;
+  color:var(--text-muted);font-size:14px;line-height:1.7;
+}
+
+/* ============================================================
+   CTA
+============================================================ */
+.cta{
+  padding:80px 0;
+}
+.cta-card{
+  background:linear-gradient(135deg,#0EA5E9 0%,#38BDF8 40%,#A855F7 100%);
+  border-radius:var(--radius-lg);
+  padding:60px 40px;text-align:center;
+  color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(14,165,233,.35);
+}
+@media (max-width:600px){.cta-card{padding:44px 22px}}
+.cta-card::before{
+  content:'';position:absolute;top:-100px;right:-100px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(250,204,21,.3),transparent 70%);
+}
+.cta-card::after{
+  content:'';position:absolute;bottom:-100px;left:-100px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.15),transparent 70%);
+}
+.cta-card h2{
+  font-size:clamp(28px,4vw,42px);font-weight:800;
+  letter-spacing:-.02em;margin-bottom:14px;position:relative;
+  color:#fff;
+}
+.cta-card p{
+  font-size:17px;opacity:.9;margin-bottom:32px;
+  max-width:560px;margin-left:auto;margin-right:auto;
+  position:relative;
+}
+.cta-actions{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  position:relative;
+}
+.cta-btn{
+  background:#fff;color:var(--primary);
+  padding:16px 32px;font-size:16px;
+  font-weight:700;border-radius:14px;border:none;
+  cursor:pointer;transition:all .2s ease;
+  text-decoration:none;display:inline-flex;
+  align-items:center;gap:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+}
+.cta-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 32px rgba(0,0,0,.2);
+}
+.cta-btn-ghost{
+  background:rgba(255,255,255,.15);color:#fff;
+  border:1.5px solid rgba(255,255,255,.4);
+  padding:16px 32px;font-size:16px;font-weight:700;
+  border-radius:14px;cursor:pointer;
+  transition:all .2s ease;text-decoration:none;
+  display:inline-flex;align-items:center;gap:10px;
+  backdrop-filter:blur(10px);
+}
+.cta-btn-ghost:hover{background:rgba(255,255,255,.25)}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer{
+  border-top:1px solid var(--border);
+  padding:50px 0 30px;
+  background:var(--bg-elev);
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:40px;margin-bottom:40px;
+}
+@media (max-width:820px){
+  .footer-grid{grid-template-columns:1fr 1fr;gap:30px}
+}
+@media (max-width:500px){
+  .footer-grid{grid-template-columns:1fr;gap:24px}
+}
+.footer-brand .brand{margin-bottom:16px}
+.footer-brand p{
+  font-size:14px;color:var(--text-muted);
+  max-width:340px;line-height:1.65;
+}
+.footer-col h4{
+  font-size:13px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--text);margin-bottom:16px;
+}
+.footer-col a{
+  display:block;color:var(--text-muted);
+  font-size:14px;padding:5px 0;
+  transition:color .2s ease;
+}
+.footer-col a:hover{color:var(--primary)}
+.footer-bottom{
+  border-top:1px solid var(--border);
+  padding-top:24px;text-align:center;
+  font-size:13px;color:var(--text-muted);
+}
+.footer-bottom .made{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:8px;
+}
+.footer-bottom svg{color:var(--danger)}
+
+/* ============================================================
+   СКРОЛЛ-АНИМАЦИИ
+============================================================ */
+.reveal{
+  opacity:0;transform:translateY(30px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ============================================================
+   МОБИЛЬНОЕ МЕНЮ
+============================================================ */
+.mobile-menu-btn{
+  display:none;background:transparent;border:none;
+  color:var(--text);cursor:pointer;padding:8px;
+}
+@media (max-width:880px){.mobile-menu-btn{display:block}}
+.mobile-menu{
+  display:none;position:fixed;inset:0;
+  background:var(--bg-elev);z-index:200;
+  padding:24px;
+  flex-direction:column;gap:16px;
+}
+.mobile-menu.open{display:flex}
+.mobile-menu-close{
+  align-self:flex-end;background:transparent;border:none;
+  color:var(--text);cursor:pointer;padding:8px;
+}
+.mobile-menu a{
+  padding:14px 16px;border-radius:12px;
+  color:var(--text);font-size:17px;font-weight:600;
+  border:1px solid var(--border);
+}
+.mobile-menu a:hover{background:var(--bg);border-color:var(--primary);color:var(--primary)}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header class="header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="#" class="brand">
+        <svg class="brand-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="120" rx="28" fill="#0EA5E9"/>
+          <path d="M25 40 Q60 30 60 40 Q60 30 95 40 L95 82 Q60 72 60 82 Q60 72 25 82 Z" fill="#FFFFFF"/>
+          <line x1="60" y1="40" x2="60" y2="82" stroke="#0EA5E9" stroke-width="2"/>
+          <path d="M42 60 L56 74 L84 46" stroke="#FACC15" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div class="brand-text">
+          <div class="brand-name">Класс Жур</div>
+          <div class="brand-tag">электронный журнал</div>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="#features">Возможности</a>
+        <a href="#free">Почему бесплатно</a>
+        <a href="#how">Как начать</a>
+        <a href="#faq">Вопросы</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle" title="Сменить тему">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <a href="#cta" class="btn btn-primary">Открыть журнал</a>
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="mobile-menu-close">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <a href="#features" onclick="closeMobileMenu()">Возможности</a>
+  <a href="#free" onclick="closeMobileMenu()">Почему бесплатно</a>
+  <a href="#how" onclick="closeMobileMenu()">Как начать</a>
+  <a href="#roles" onclick="closeMobileMenu()">Роли</a>
+  <a href="#faq" onclick="closeMobileMenu()">Вопросы</a>
+  <a href="#cta" onclick="closeMobileMenu()" style="background:linear-gradient(135deg,#0EA5E9,#38BDF8);color:#fff;text-align:center;">Открыть журнал</a>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.6-6.2 4.6 2.4-7.4L2 9.4h7.6z"/>
+          </svg>
+          100% бесплатно — навсегда
+        </div>
+        <h1>
+          Электронный журнал<br>
+          <span class="gradient">для современных школ</span>
+        </h1>
+        <p class="hero-subtitle">
+          Оценки, классы, ученики, домашние задания и средний балл — всё в одном месте.
+          Работает на планшете, компьютере и телефоне. Без установки, без оплаты, без рекламы.
+        </p>
+        <div class="hero-actions">
+          <a href="#cta" class="btn btn-primary btn-lg">
+            Начать бесплатно
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+          <a href="#features" class="btn btn-ghost btn-lg">Узнать больше</a>
+        </div>
+        <div class="hero-features">
+          <div class="hero-feature">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Без оплаты
+          </div>
+          <div class="hero-feature">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Без рекламы
+          </div>
+          <div class="hero-feature">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Работает онлайн
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-mockup">
+          <div class="mockup-header">
+            <div class="mockup-dot r"></div>
+            <div class="mockup-dot y"></div>
+            <div class="mockup-dot g"></div>
+          </div>
+          <div class="mockup-table">
+            <div class="mockup-cell head">№</div>
+            <div class="mockup-cell head">Ученик</div>
+            <div class="mockup-cell head">02</div>
+            <div class="mockup-cell head">05</div>
+            <div class="mockup-cell head">09</div>
+            <div class="mockup-cell head">12</div>
+            <div class="mockup-cell head">16</div>
+            <div class="mockup-cell head">19</div>
+            <div class="mockup-cell head">23</div>
+            <div class="mockup-cell head">Ср</div>
+            <div class="mockup-cell head">Ит</div>
+
+            <div class="mockup-cell">1</div>
+            <div class="mockup-cell name">Абрамов А.</div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade empty-g"></div></div>
+            <div class="mockup-cell"><div class="mockup-grade g4">4</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade empty-g"></div></div>
+            <div class="mockup-cell"><div class="mockup-grade g3">3</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell" style="color:#10B981;font-weight:800">4.4</div>
+            <div class="mockup-cell" style="color:#10B981;font-weight:800">4</div>
+
+            <div class="mockup-cell">2</div>
+            <div class="mockup-cell name">Белова С.</div>
+            <div class="mockup-cell"><div class="mockup-grade g4">4</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade empty-g"></div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g4">4</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade empty-g"></div></div>
+            <div class="mockup-cell" style="color:#84CC16;font-weight:800">4.6</div>
+            <div class="mockup-cell" style="color:#84CC16;font-weight:800">5</div>
+
+            <div class="mockup-cell">3</div>
+            <div class="mockup-cell name">Виноградов К.</div>
+            <div class="mockup-cell"><div class="mockup-grade g3">3</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g4">4</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g4">4</div></div>
+            <div class="mockup-cell"><div class="mockup-grade empty-g"></div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade empty-g"></div></div>
+            <div class="mockup-cell"><div class="mockup-grade g4">4</div></div>
+            <div class="mockup-cell" style="color:#D97706;font-weight:800">4.0</div>
+            <div class="mockup-cell" style="color:#D97706;font-weight:800">4</div>
+
+            <div class="mockup-cell">4</div>
+            <div class="mockup-cell name">Гусева М.</div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell"><div class="mockup-grade g5">5</div></div>
+            <div class="mockup-cell" style="color:#10B981;font-weight:800">5.0</div>
+            <div class="mockup-cell" style="color:#10B981;font-weight:800">5</div>
+          </div>
+        </div>
+        <div class="floating-badge top-right">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Автоматический средний балл
+        </div>
+        <div class="floating-badge bottom-left">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          Заполнение года в 1 клик
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ПОЧЕМУ БЕСПЛАТНО
+============================================================ -->
+<section class="free-section" id="free">
+  <div class="container">
+    <div class="free-card reveal">
+      <div class="free-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        Бесплатно навсегда
+      </div>
+      <h2>Почему «Класс Жур» бесплатный?</h2>
+      <p>
+        Мы верим, что доступ к современным инструментам для школы не должен зависеть от бюджета.
+        Наша цель — сделать удобный журнал, которым смогут пользоваться <b>все школы России</b>,
+        независимо от размера и финансирования. Поэтому мы не берём оплату и не показываем рекламу.
+      </p>
+      <div class="free-benefits">
+        <div class="free-benefit">
+          <div class="free-benefit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="free-benefit-title">0 ₽ навсегда</div>
+          <div class="free-benefit-desc">Ни платежей, ни подписок</div>
+        </div>
+        <div class="free-benefit">
+          <div class="free-benefit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+          </div>
+          <div class="free-benefit-title">Без рекламы</div>
+          <div class="free-benefit-desc">Никаких баннеров и попапов</div>
+        </div>
+        <div class="free-benefit">
+          <div class="free-benefit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="free-benefit-title">Ваши данные — ваши</div>
+          <div class="free-benefit-desc">Никакой передачи третьим лицам</div>
+        </div>
+        <div class="free-benefit">
+          <div class="free-benefit-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="free-benefit-title">Без ограничений</div>
+          <div class="free-benefit-desc">Неограниченно учеников и классов</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ВОЗМОЖНОСТИ
+============================================================ -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Возможности</span>
+      <h2>Всё, что нужно <span class="gradient">современному учителю</span></h2>
+      <p class="section-sub">Простой интерфейс, мощный функционал, работает везде</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <h3>Табличный журнал</h3>
+        <p>Привычный вид школьного журнала — с датами-колонками, темами уроков и домашними заданиями. Оценки прямо в ячейках.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <h3>Заполнение года в 1 клик</h3>
+        <p>Укажите дни недели, когда проходят уроки, — журнал автоматически создаст уроки на весь учебный год. Экономия часов работы.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
+        <h3>Средний балл автоматически</h3>
+        <p>Средневзвешенный балл считается сам — с учётом веса каждой работы. Всё видно в журнале и профиле ученика.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <h3>Гибкие типы работ</h3>
+        <p>5 базовых типов уже в комплекте: ответ на уроке, диктант, проверочная, контрольная и итоговая. Добавляйте свои с любым весом.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <h3>Темы и домашние задания</h3>
+        <p>Для каждого урока можно записать тему и ДЗ. Наведите курсор на дату — увидите, что задавали в этот день.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <h3>Экспорт в CSV</h3>
+        <p>Вся таблица оценок выгружается в один клик. Удобно для отчётности, печати или переноса в Excel.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/>
+          </svg>
+        </div>
+        <h3>Добавление учеников списком</h3>
+        <p>Вставьте 20 фамилий через запятую — все 20 учеников добавятся сразу в класс. Быстро и без ручной работы.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Безопасность и роли</h3>
+        <p>Иерархия ролей: создатель → город → школа → учитель. Каждый видит только своё. Данные защищены Firebase.</p>
+      </div>
+
+      <div class="feature reveal">
+        <div class="feature-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <h3>Работает везде</h3>
+        <p>Не нужно ничего устанавливать. Открывается в браузере на планшете, компьютере, ноутбуке и телефоне.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     КАК НАЧАТЬ
+============================================================ -->
+<section class="section" id="how" style="background:var(--bg-elev);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Как начать</span>
+      <h2>4 шага от регистрации <span class="gradient">до первой оценки</span></h2>
+      <p class="section-sub">Обычно занимает меньше 5 минут</p>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Получите доступ</h3>
+        <p>Откройте приложение и войдите как администратор. Создайте город и школу или используйте код приглашения.</p>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Создайте класс</h3>
+        <p>Укажите название (например, «1А»), год и выберите предметы из готового списка — с чекбоксами и поиском.</p>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>Добавьте учеников</h3>
+        <p>Вставьте список фамилий через запятую — все сразу добавятся в класс. Или вводите их по одному.</p>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <h3>Начните вести журнал</h3>
+        <p>Нажмите «Заполнить год» — создадутся уроки на все дни. Ставьте оценки, темы, ДЗ. Всё готово!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     РОЛИ
+============================================================ -->
+<section class="section" id="roles">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Роли</span>
+      <h2>Понятная система <span class="gradient">доступа</span></h2>
+      <p class="section-sub">Каждый видит только то, что ему нужно</p>
+    </div>
+
+    <div class="roles">
+      <div class="role reveal">
+        <div class="role-tag creator">Создатель</div>
+        <h3>Главный администратор</h3>
+        <ul>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Создаёт города</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Управляет создателями городов</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Видит все школы системы</li>
+        </ul>
+      </div>
+
+      <div class="role reveal">
+        <div class="role-tag city">Создатель города</div>
+        <h3>Управляет школами города</h3>
+        <ul>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Создаёт школы в своём городе</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Назначает создателей школ</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Видит только свой город</li>
+        </ul>
+      </div>
+
+      <div class="role reveal">
+        <div class="role-tag school">Создатель школы</div>
+        <h3>Управляет учителями</h3>
+        <ul>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Создаёт коды для учителей</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Просматривает статистику школы</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Настраивает типы работ</li>
+        </ul>
+      </div>
+
+      <div class="role reveal">
+        <div class="role-tag teacher">Учитель</div>
+        <h3>Ведёт свой журнал</h3>
+        <ul>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Создаёт классы</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Добавляет учеников списком</li>
+          <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ставит оценки, темы, ДЗ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+============================================================ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Вопросы</span>
+      <h2>Часто задаваемые <span class="gradient">вопросы</span></h2>
+    </div>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">
+          Правда ли, что журнал полностью бесплатный?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Да. Никаких подписок, платежей за учителей, лимитов на количество учеников или классов. Мы делаем это, чтобы школы могли пользоваться современным инструментом независимо от бюджета.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Нужно ли что-то устанавливать?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Нет. «Класс Жур» работает прямо в браузере — на компьютере, планшете и телефоне. Никаких программ скачивать не нужно. Просто откройте ссылку и войдите.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Как добавить учеников в класс?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Можно добавить сразу несколько учеников: откройте класс, нажмите «Добавить учеников» и вставьте список фамилий через запятую или с новой строки. Все фамилии добавятся автоматически — например, 20 учеников за раз.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Есть ли мобильное приложение?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Отдельного приложения для скачивания нет — и это удобно: вы не зависите от обновлений магазина приложений. Сайт полностью адаптирован под планшеты и телефоны, работает как мобильное приложение. Можно добавить на главный экран для быстрого доступа.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Что случится с моими данными, если что-то пойдёт не так?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Данные хранятся в облаке Firebase (Google) — той же инфраструктуре, которую используют миллионы приложений. Все данные сохраняются автоматически. В любой момент вы можете выгрузить весь журнал в CSV-файл.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Могут ли ученики и родители видеть свои оценки?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          В текущей версии доступ к журналу есть только у учителя и администрации школы. В будущих обновлениях мы планируем добавить личный кабинет для учеников и родителей.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Можно ли перенести данные из другого журнала?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Учеников можно добавить списком, а классы — создать за пару минут. Если нужен массовый импорт из другого формата — напишите нам, поможем с переносом.
+        </div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">
+          Как считать средний балл ученика?
+          <span class="plus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          Средний балл считается автоматически как <b>средневзвешенный</b>: каждая работа имеет свой вес. Например, «Ответ на уроке» — вес 1, «Контрольная работа» — вес 5. Чем важнее работа, тем больше она влияет на средний балл.
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA
+============================================================ -->
+<section class="cta" id="cta">
+  <div class="container">
+    <div class="cta-card reveal">
+      <h2>Готовы попробовать?</h2>
+      <p>Откройте «Класс Жур» и начните вести журнал уже через минуту. Это бесплатно и ни к чему не обязывает.</p>
+      <div class="cta-actions">
+        <a href="#" class="cta-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Войти в журнал
+        </a>
+        <a href="#features" class="cta-btn-ghost">
+          Сначала посмотреть
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="brand">
+          <svg class="brand-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="width:52px;height:52px">
+            <rect width="120" height="120" rx="28" fill="#0EA5E9"/>
+            <path d="M25 40 Q60 30 60 40 Q60 30 95 40 L95 82 Q60 72 60 82 Q60 72 25 82 Z" fill="#FFFFFF"/>
+            <line x1="60" y1="40" x2="60" y2="82" stroke="#0EA5E9" stroke-width="2"/>
+            <path d="M42 60 L56 74 L84 46" stroke="#FACC15" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          <div class="brand-text">
+            <div class="brand-name">Класс Жур</div>
+            <div class="brand-tag">электронный журнал</div>
+          </div>
+        </a>
+        <p>Бесплатный электронный журнал для российских школ. Оценки, классы, ученики, домашние задания — всё в одном месте.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Продукт</h4>
+        <a href="#features">Возможности</a>
+        <a href="#how">Как начать</a>
+        <a href="#roles">Роли</a>
+        <a href="#cta">Открыть журнал</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Документация</h4>
+        <a href="#faq">Частые вопросы</a>
+        <a href="#free">Почему бесплатно</a>
+        <a href="#">Инструкция учителя</a>
+        <a href="#">Инструкция администратора</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Связь</h4>
+        <a href="mailto:support@klass-zhur.ru">support@klass-zhur.ru</a>
+        <a href="#">Сообщить о проблеме</a>
+        <a href="#">Предложить идею</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Класс Жур. Все права защищены.</div>
+      <div class="made">
+        Сделано с
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        для учителей
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   ТЕМА
+============================================================ */
+(function() {
+  var saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.dataset.theme = saved;
+  updateThemeIcon(saved);
+
+  document.getElementById('theme-toggle').addEventListener('click', function() {
+    var cur = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = cur;
+    localStorage.setItem('theme', cur);
+    updateThemeIcon(cur);
+  });
+
+  function updateThemeIcon(theme) {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    if (theme === 'dark') {
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+    } else {
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
+  }
+})();
+
+/* ============================================================
+   FAQ
+============================================================ */
+document.querySelectorAll('.faq-item').forEach(function(item) {
+  item.querySelector('.faq-q').addEventListener('click', function() {
+    item.classList.toggle('open');
+  });
+});
+
+/* ============================================================
+   МОБИЛЬНОЕ МЕНЮ
+============================================================ */
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+  document.getElementById('mobile-menu').classList.add('open');
+});
+document.getElementById('mobile-menu-close').addEventListener('click', closeMobileMenu);
+
+/* ============================================================
+   СКРОЛЛ-АНИМАЦИИ
+============================================================ */
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(function(el) {
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
